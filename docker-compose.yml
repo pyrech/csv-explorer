@@ -1,0 +1,33 @@
+version: '3.7'
+
+volumes:
+    mysql-data: {}
+    pma-sessions: {}
+
+services:
+    mysql:
+        container_name: csv-explorer_mysql
+        image: mariadb:10.4
+        environment:
+            MYSQL_ROOT_PASSWORD: yolo
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - mysql-data:/var/lib/mysql
+            - ./:/app
+        working_dir: /app
+
+    phpmyadmin:
+        container_name: csv-explorer_phpmyadmin
+        image: phpmyadmin
+        depends_on:
+            - mysql
+        restart: always
+        ports:
+            - 8080:80
+        volumes:
+            - pma-sessions:/sessions
+        environment:
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: yolo
+            PMA_HOST: mysql
